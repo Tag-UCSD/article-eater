@@ -1,0 +1,1 @@
+# 7-Panel (Free LLM): conservative extraction; fill 'unknown' when unsure.

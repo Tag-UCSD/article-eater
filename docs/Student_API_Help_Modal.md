@@ -1,0 +1,1 @@
+# Get an API key in Google AI Studio, then paste under Profile → API Keys.

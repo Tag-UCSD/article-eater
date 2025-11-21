@@ -1,0 +1,34 @@
+kept:
+  - Project_Constitution.md
+  - release.keep.yml
+  - deprecations.yml
+  - .github/workflows/governance.yml
+  - .github/pull_request_template.md
+  - CODEOWNERS
+  - scripts/check_governance.py
+  - scripts/orphan_sweep.py
+  - scripts/public_surface_ledger.py
+  - scripts/manifest_sha256.py
+  - reconstructor_min.py
+  - deconcat.py
+  - RUTHLESS_v5.1.md
+  - public_surface_ledger.json
+quarantine_rule: "Use quarantine/{date}/<original_path> and add a note below."
+notes: []
+
+critical_paths:
+  - contracts/**
+  - migrations/**
+  - prompts/**
+  - app/**
+  - templates/**
+
+notes: |
+  v17 dual-hierarchy files added; v16.1 content preserved.
+
+"v18.1: installed full workflow; moved v18 handoff bundles into docs/archive (sacred) on 2025-11-12."
+"v18.1.2 on 2025-11-12: Dockerfile, FastAPI app (/healthz,/metrics), CI v3, pre-commit, tests, logging."
+
+"v18.2.0 2025-11-14: design pack added."
+
+"v18.3 on 2025-11-14: high‑recall triage, multi‑pass extraction/QC, multi‑doc synthesis, rule frontier, schema+DB extensions; strictly additive."

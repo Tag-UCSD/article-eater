@@ -1,0 +1,137 @@
+This new logic runs after Panel 5 (Findings) have been created. It processes Panel 6 to populate the new tables.
+
+"""
+tasks.py (v17 - Excerpt)
+New logic for processing Panel 6 and populating
+the mechanism and link tables.
+"""
+
+from models import Finding, Mechanism, FindingMechanismLink, Paper
+from database import session_scope
+import logging
+
+logger = logging.getLogger(__name__)
+
+def process_v17_extraction(panel_data: dict, job_id: str):
+    """
+    Main task to process the full 7-panel v17 extraction.
+    """
+    
+    # --- 1. Get or Create Paper ---
+    # This logic must be robust. Assumes a helper function.
+    paper = get_or_create_paper(panel_data['panel_1_citation'], job_id)
+    
+    # --- 2. Process Panel 5 (Findings) ---
+    # This creates the Micro-Findings
+    panel_5 = panel_data.get('panel_5_findings', {})
+    created_findings = []
+    
+    with session_scope() as session:
+        for finding_data in panel_5.get('operational_findings', []):
+            new_finding = Finding(
+                finding_level='micro',
+                consequent=finding_data['consequent_construct'],
+                antecedents=json.dumps([finding_data['antecedent']]),
+                operational_measure=finding_data['operational_measure'],
+                measure_type=finding_data['measure_type'],
+                measure_direction=finding_data['measure_direction'],
+                p_value=finding_data['statistical_details'].get('p_value'),
+                effect_size=finding_data['statistical_details'].get('effect_size'),
+                sample_size=finding_data['statistical_details'].get('sample_size'),
+                # ... etc ...
+            )
+            session.add(new_finding)
+            created_findings.append(new_finding)
+        
+        session.commit()
+        
+        # --- 3. Process Panel 6 (Mechanisms & Links) ---
+        # This is the new, critical v17 logic
+        panel_6 = panel_data.get('panel_6_discussion', {})
+        
+        # Use a new session to handle mechanism creation and linking
+        process_panel_6_explanations(
+            session=session,
+            panel_6_data=panel_6,
+            paper_id=paper.id,
+            job_findings=created_findings
+        )
+        session.commit()
+
+    # --- 4. Run Meso-Finding Aggregation ---
+    # This is the call to meta_review.py, which now runs
+    # on the micro-findings just created.
+    # ... (call aggregate_all_micro_findings() here) ...
+
+
+def process_panel_6_explanations(session, panel_6_data: dict, paper_id: int, job_findings: List[Finding]):
+    """
+    Parses Panel 6 to populate 'mechanisms' and 'finding_mechanism_links'.
+    """
+    
+    # 1. Create/Update Mechanisms
+    mechanisms_in_paper = {} # Cache {name: id}
+    
+    for mech_data in panel_6_data.get('mechanisms_identified', []):
+        name = mech_data.get('name')
+        if not name:
+            continue
+            
+        # Find existing or create new
+        mechanism = session.query(Mechanism).filter_by(name=name).first()
+        if not mechanism:
+            mechanism = Mechanism(
+                name=name,
+                description=mech_data.get('definition'),
+                mechanism_level=mech_data.get('level', 'mechanism')
+            )
+            session.add(mechanism)
+            session.flush() # Get ID
+        
+        mechanisms_in_paper[name] = mechanism.id
+    
+    # Handle parent-child links (second pass)
+    for mech_data in panel_6_data.get('mechanisms_identified', []):
+        parent_name = mech_data.get('parent')
+        if parent_name:
+            child_id = mechanisms_in_paper.get(mech_data.get('name'))
+            parent_id = mechanisms_in_paper.get(parent_name)
+            
+            if child_id and parent_id:
+                child_mech = session.query(Mechanism).get(child_id)
+                if child_mech and not child_mech.parent_mechanism_id:
+                    child_mech.parent_mechanism_id = parent_id
+    
+    # 2. Create Explanation Links
+    for link_data in panel_6_data.get('explanation_links', []):
+        finding_consequent = link_data.get('finding_consequent')
+        mechanism_name = link_data.get('explained_by_mechanism')
+        
+        if not finding_consequent or not mechanism_name:
+            continue
+            
+        # Find the mechanism ID
+        mechanism_id = mechanisms_in_paper.get(mechanism_name)
+        if not mechanism_id:
+            logger.warning(f"Paper {paper_id} links to unknown mechanism: {mechanism_name}")
+            continue
+            
+        # Find all findings from this job that match the consequent
+        matching_findings = [f for f in job_findings if f.consequent == finding_consequent]
+        
+        for finding in matching_findings:
+            # Create the link
+            new_link = FindingMechanismLink(
+                finding_id=finding.id,
+                mechanism_id=mechanism_id,
+                paper_id=paper_id,
+                evidence_strength=link_data.get('evidence_strength', 'speculative'),
+                snippet=link_data.get('snippet')
+            )
+            session.add(new_link)
+            logger.info(f"Linking Finding {finding.id} to Mechanism {mechanism_id} (Paper {paper_id})")
+
+# ... (Helper function get_or_create_paper) ...
+def get_or_create_paper(citation_data: dict, job_id: str) -> Paper:
+    # ... (Logic to find paper by DOI or create new one) ...
+    pass

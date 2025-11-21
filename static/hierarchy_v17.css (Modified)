@@ -1,0 +1,92 @@
+This file contains all styles from hierarchy.css [cite: 344], with the following additions/modifications to support the new explanation display:
+
+/* ... (All v16 styles [cite: 344] remain) ... */
+
+/* Rename 'rule' to 'finding' */
+.finding-node { ... }
+.finding-header { ... }
+.finding-badge { ... }
+.finding-text { ... }
+.finding-children { ... }
+
+/* *** NEW v17 STYLES *** */
+
+.explanation-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px dashed #e2e8f0;
+}
+
+.explanation-header {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.explanation-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.explanation-item {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.explanation-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.mechanism-icon {
+  font-size: 1.125rem;
+}
+
+.mechanism-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #3182ce;
+  text-decoration: none;
+}
+.mechanism-link:hover {
+  text-decoration: underline;
+}
+
+.explanation-provenance {
+  font-size: 0.8125rem;
+  color: #718096;
+  padding-left: 1.625rem; /* Align with link */
+}
+
+.explanation-provenance .paper-link {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.strength-badge {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: capitalize;
+}
+.strength-badge.strong { color: #48bb78; }
+.strength-badge.moderate { color: #ed8936; }
+.strength-badge.speculative { color: #a0aec0; }
+
+.explanation-snippet {
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  color: #2d3748;
+  border-left: 3px solid #cbd5e0;
+  padding-left: 0.75rem;
+  margin: 0.5rem 0 0.25rem 1.625rem;
+  font-size: 0.875rem;
+}

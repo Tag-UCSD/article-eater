@@ -1,0 +1,1 @@
+# Conventions: concatenated markers; UTF-8; normalized newlines.

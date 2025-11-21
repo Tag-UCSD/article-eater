@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BNPackage",
+  "type": "object",
+  "required": [
+    "package_id",
+    "rules",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "package_id": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "rule_graph.schema.json"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "priors": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "provenance": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

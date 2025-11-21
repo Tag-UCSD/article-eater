@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+import argparse
+import pathlib
+import sys
+
+MARKER_FILE_PATH = "----- FILE PATH:"
+MARKER_CONTENT_START = "----- CONTENT START -----"
+MARKER_CONTENT_END = "----- CONTENT END -----"
+
+
+def reconstruct(output_dir: str, verbose: bool = True) -> int:
+    this_file = pathlib.Path(__file__).resolve()
+    out_root = pathlib.Path(output_dir).resolve()
+    out_root.mkdir(parents=True, exist_ok=True)
+    lines = this_file.read_text(encoding="utf-8").splitlines(True)
+    n = len(lines)
+    i = 0
+    while i < n and not lines[i].startswith(MARKER_FILE_PATH):
+        i += 1
+    if i >= n:
+        print("No file markers found.", file=sys.stderr)
+        return 1
+    count = 0
+    while i < n:
+        line = lines[i].rstrip("\n")
+        if not line.startswith(MARKER_FILE_PATH):
+            i += 1
+            continue
+        relpath = line[len(MARKER_FILE_PATH):].strip()
+        i += 1
+        if i >= n or lines[i].strip() != MARKER_CONTENT_START:
+            print(f"Malformed start marker for {relpath}", file=sys.stderr)
+            return 1
+        i += 1
+        buf = []
+        while i < n and lines[i].strip() != MARKER_CONTENT_END:
+            buf.append(lines[i])
+            i += 1
+        if i >= n:
+            print(f"Missing end marker for {relpath}", file=sys.stderr)
+            return 1
+        i += 1
+        out_path = out_root / relpath
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text("".join(buf), encoding="utf-8")
+        count += 1
+        if verbose:
+            print(f"Wrote {relpath}")
+    print(f"Reconstructed {count} files under {out_root}")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="Reconstruct governance-kit-v3 repo from this file.")
+    parser.add_argument("--output-dir", "-o", default="governance-kit-v3",
+                        help="Directory to write the reconstructed repo into.")
+    parser.add_argument("--quiet", "-q", action="store_true", help="Suppress per-file logs.")
+    args = parser.parse_args(argv)
+    code = reconstruct(args.output_dir, verbose=not args.quiet)
+    raise SystemExit(code)
+
+
+if __name__ == "__main__":
+    main()

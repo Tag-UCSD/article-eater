@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Findings — {{ job_id }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='hierarchy_v17.css') }}">
+</head>
+<body>
+  {% include '_partials/nav.html' %}
+  
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/jobs">Jobs</a> &raquo;
+      <a href="/shortlist/{{ job_id }}/view">{{ job_id }}</a> &raquo;
+      <span class="current">Findings</span>
+    </div>
+    
+    <header class="page-header">
+      <div class="header-content">
+        <h1>Empirical Findings</h1>
+        <p class="header-description">
+          {{ stats.micro_count }} micro-findings aggregated into {{ stats.meso_count }} meso-findings
+        </p>
+      </div>
+      
+      <!-- View Mode Selector (Unchanged) -->
+      <div class="view-selector">
+        <button class="view-btn active" data-view="hierarchy" title="Hierarchical tree view">
+          <span class="icon">🌳</span> <span class="label">Tree</span>
+        </button>
+        <button class="view-btn" data-view="flat" title="Flat list view">
+          <span class="icon">📋</span> <span class="label">List</span>
+        </button>
+        <button class="view-btn disabled" data-view="network" title="Network graph (coming soon)">
+          <span class="icon">🕸️</span> <span class="label">Network</span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Stats Grid (Unchanged) -->
+    <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.total_count }}</div>
+          <div class="stat-label">Total Findings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.micro_count }}</div>
+          <div class="stat-label">Micro-Findings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.meso_count }}</div>
+          <div class="stat-label">Meso-Findings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">{{ stats.avg_triangulation|round(1) }}</div>
+          <div class="stat-label">Avg Triangulation</div>
+        </div>
+    </div>
+    
+    <!-- Hierarchical View -->
+    <div id="hierarchy-view" class="view-container active">
+        <!-- Tree Controls (Unchanged) -->
+        <div class="tree-controls">
+            <button class="control-btn" id="expand-all">⊞ Expand All</button>
+            <button class="control-btn" id="collapse-all">⊟ Collapse All</button>
+            <!-- ... filters ... -->
+            <div class="legend">
+              <span class="legend-badge meso">MESO</span> Findings
+              <span class="legend-badge micro">MICRO</span> Findings
+            </div>
+        </div>
+        
+        <!-- Tree Container -->
+        <div class="tree-container">
+            {% for macro in macro_findings %}
+                <!-- ... (macro-finding node here) ... -->
+                <div class="rule-children">
+                    {% for meso in macro.child_findings %}
+                        {% include '_partials/meso_finding_node.html' %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            
+            {% for meso in standalone_meso_findings %}
+                {% include '_partials/meso_finding_node.html' %}
+            {% endfor %}
+            
+            {% if orphan_micro_findings %}
+                <!-- ... (orphan micro-findings section) ... -->
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Flat List View -->
+    <div id="flat-view" class="view-container" style="display: none;">
+      {% include '_partials/findings_flat.html' %}
+    </div>
+    
+  </div>
+  
+  <script src="{{ url_for('static', filename='hierarchy.js') }}"></script>
+</body>
+</html>

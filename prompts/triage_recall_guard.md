@@ -1,0 +1,1 @@
+Abstract triage: return keep/drop + rationale. Optimize for recall≥95%. Borderline cases → KEEP. Provide top terms and similarity score.

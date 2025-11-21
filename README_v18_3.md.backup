@@ -1,0 +1,13 @@
+# governance-kit-v3
+
+governance-kit-v3 is a small, repo-agnostic governance layer for AI-assisted
+development. It is meant to be dropped into any project directory, even before
+Git is used, to provide:
+
+- a `SYSTEM_VISION.md` that explains why the system exists;
+- a `PROJECT_CONSTITUTION.md` that lists non-negotiable rules;
+- a `CONVERSATION_LEDGER.yml` that records key human–AI sessions;
+- a guard script `conversation_guard.py` to sanity-check the governance files.
+
+The repository also includes a concatenated one-file representation
+`governance_kit_v3_concatenated.txt` that can be handed to other AI systems.

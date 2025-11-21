@@ -1,0 +1,1 @@
+# 7-Panel (Gemini): return JSON matching schemas/seven_panel.schema.json.

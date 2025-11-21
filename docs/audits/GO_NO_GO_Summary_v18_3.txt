@@ -1,0 +1,1 @@
+Enterprise NO-GO: missing queue executor, secure API key path, and cost telemetry; Governance GO.

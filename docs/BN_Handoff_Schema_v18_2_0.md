@@ -1,0 +1,1 @@
+# BN handoff uses schemas/bn_package.schema.json (rules, nodes, edges, priors).

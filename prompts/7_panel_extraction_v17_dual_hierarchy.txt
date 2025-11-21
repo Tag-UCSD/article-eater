@@ -1,0 +1,159 @@
+ARTICLE EATER v17.0: DUAL-HIERARCHY EXTRACTION
+(Findings & Mechanisms)
+
+================================================================================
+CRITICAL INSTRUCTIONS: DUAL-HIERARCHY EXTRACTION
+================================================================================
+
+Your task is to extract structured data for a "Dual-Hierarchy" model.
+This model separates:
+1.  **FINDINGS (Panel 5):** The "What." Empirical, observable results.
+    (e.g., "Plants -> Cortisol ↓")
+2.  **MECHANISMS (Panel 6):** The "Why." Theoretical explanations for those findings.
+    (e.g., "Biophilia Hypothesis," "Perceptual Fluency")
+
+**Panel 5 and Panel 6 are now independent and must be populated separately.**
+
+================================================================================
+PANEL 1: CITATION INFORMATION (No Change)
+PANEL 2: RESEARCH FOCUS (No Change)
+PANEL 3: STUDY CONTEXT (No Change)
+PANEL 4: METHODOLOGY (No Change)
+================================================================================
+... (Panels 1-4 are identical to the v16 prompt [cite: 217-220]) ...
+================================================================================
+
+================================================================================
+PANEL 5: FINDINGS (THE "WHAT")
+================================================================================
+
+*** CRITICAL: Extract EVERY operational measure separately ***
+This panel populates the `findings` table.
+DO NOT include theoretical explanations or mechanisms here.
+
+For EACH outcome variable measured, provide:
+1.  The CONSTRUCT being assessed (stress, anxiety, attention, mood, etc.)
+2.  The OPERATIONAL MEASURE (cortisol, heart_rate, STAI score, etc.)
+3.  The MEASURE TYPE (physiological, behavioral, self_report)
+4.  The DIRECTION of effect (increase, decrease, stable)
+5.  COMPLETE STATISTICAL DETAILS (p-value, effect size, N, etc.)
+
+OUTPUT FORMAT:
+{
+  "main_finding_summary": "Curved walls reduced anxiety compared to angular walls",
+  "operational_findings": [
+    {
+      "antecedent": "curved_walls",
+      "consequent_construct": "anxiety",
+      "operational_measure": "salivary_cortisol",
+      "measure_type": "physiological",
+      "measure_direction": "decrease",
+      "statistical_details": {
+        "p_value": 0.03,
+        "effect_size": 0.52,
+        "effect_size_type": "cohen_d",
+        "sample_size": 68
+      }
+    },
+    {
+      "antecedent": "curved_walls",
+      "consequent_construct": "anxiety",
+      "operational_measure": "state_anxiety_inventory",
+      "measure_type": "self_report",
+      "measure_direction": "decrease",
+      "statistical_details": {
+        "p_value": 0.01,
+        "effect_size": 0.64,
+        "effect_size_type": "cohen_d",
+        "sample_size": 68
+      }
+    }
+  ]
+}
+
+================================================================================
+PANEL 6: MECHANISMS & EXPLANATIONS (THE "WHY")
+================================================================================
+
+*** CRITICAL: This panel is completely new. ***
+It populates the `mechanisms` and `finding_mechanism_links` tables.
+Identify all theoretical constructs used to EXPLAIN the findings from Panel 5.
+
+Provide two separate JSON arrays:
+
+**Part 1: `mechanisms_identified`**
+List all unique theoretical constructs mentioned in the paper.
+Define parent-child relationships if the paper specifies them.
+
+**Part 2: `explanation_links`**
+This is the "Bridge." For each mechanism, state which FINDING (from Panel 5) it
+is used to explain.
+
+OUTPUT FORMAT:
+{
+  "discussion_main_points": [
+    "Curved forms reduce anxiety through reduced prediction error",
+    "Results align with evolutionary preferences for natural, organic shapes",
+    "Limitations: Lab setting..."
+  ],
+
+  "mechanisms_identified": [
+    {
+      "name": "Predictive Processing",
+      "level": "theory",
+      "parent": null,
+      "definition": "A unified brain theory where the brain minimizes prediction error."
+    },
+    {
+      "name": "Perceptual Fluency",
+      "level": "mechanism",
+      "parent": "Predictive Processing",
+      "definition": "The ease with which a stimulus is processed."
+    },
+    {
+      "name": "Biophilia Hypothesis",
+      "level": "theory",
+      "parent": null,
+      "definition": "The innate human affinity for natural forms."
+    },
+    {
+      "name": "Statistical Fractal Detection",
+      "level": "process",
+      "parent": "Biophilia Hypothesis",
+      "definition": "Subconscious visual processing of fractal geometries."
+    }
+  ],
+  
+  "explanation_links": [
+    {
+      "finding_consequent": "anxiety_reduction",
+      "explained_by_mechanism": "Perceptual Fluency",
+      "evidence_strength": "moderate",
+      "snippet": "We propose this reduction in anxiety is due to the high perceptual fluency of curved forms, which reduces prediction error (Friston, 2010)."
+    },
+    {
+      "finding_consequent": "anxiety_reduction",
+      "explained_by_mechanism": "Biophilia Hypothesis",
+      "evidence_strength": "speculative",
+      "snippet": "Alternatively, this effect could be explained by an innate biophilic preference for non-angular, organic shapes (Wilson, 1984)."
+    }
+  ]
+}
+
+================================================================================
+PANEL 7: KEY REFERENCES (No Change)
+================================================================================
+... (Identical to v16 prompt [cite: 224]) ...
+================================================================================
+
+FINAL OUTPUT FORMAT:
+Return a SINGLE JSON object with all 7 panels:
+{
+  "panel_1_citation": { ... },
+  "panel_2_research_focus": { ... },
+  "panel_3_study_context": { ... },
+  "panel_4_methodology": { ... },
+  "panel_5_findings": { ... },
+  "panel_6_discussion": { ... },
+  "panel_7_references": { ... }
+}

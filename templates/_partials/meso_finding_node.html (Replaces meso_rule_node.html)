@@ -1,0 +1,87 @@
+<!-- 
+  Meso-Finding Node (v17)
+  Replaces meso_rule_node.html [cite: 343]
+  CRITICAL CHANGE: Removes direct 'mechanism' display and adds
+  a loop over the new 'explanation_links' relationship.
+-->
+<div class="finding-node meso-node" data-construct="{{ meso.consequent }}">
+  <div class="finding-header" onclick="toggleNode(this)">
+    <span class="expand-icon expanded">▼</span>
+    <span class="finding-badge meso">MESO</span>
+    
+    <div class="finding-content">
+      <h3 class="finding-text">{{ meso.finding }}</h3>
+      
+      <!-- Aggregation Summary (Unchanged from v16 [cite: 343]) -->
+      <div class="aggregation-summary">
+        <span class="summary-badge">
+          🔬 {{ meso.operational_measures_used|length }} measures
+        </span>
+        <span class="summary-badge">
+          👥 N={{ meso.total_sample_size }}
+        </span>
+        <span class="summary-badge">
+          📊 {{ meso.num_child_rules }} studies
+        </span>
+      </div>
+      
+      <!-- Confidence Breakdown (Unchanged from v16 [cite: 343]) -->
+      <div class="confidence-breakdown">
+        <div class="confidence-bar-container">
+          <!-- ... (confidence segments) ... -->
+        </div>
+        <div class="confidence-total">
+          Total Confidence: <strong>{{ (meso.weight * 100)|round }}%</strong>
+        </div>
+      </div>
+      
+      <!-- 
+        *** NEW v17 EXPLANATION SECTION ***
+        This replaces the v16 'mechanism-display'.
+        It loops over the `finding_mechanism_links` table.
+      -->
+      {% if meso.explanation_links %}
+      <div class="explanation-section">
+        <h4 class="explanation-header">Proposed Explanations (The "Why")</h4>
+        <ul class="explanation-list">
+          {% for link in meso.explanation_links %}
+          <li class="explanation-item">
+            <div class="explanation-link">
+              <span class="mechanism-icon">⚙️</span>
+              <a href="/mechanism/{{ link.mechanism.id }}" class="mechanism-link">
+                {{ link.mechanism.name }}
+              </a>
+            </div>
+            <div class="explanation-provenance">
+              Linked by 
+              <a href="/paper/{{ link.paper.doi|urlencode }}/analysis" class="paper-link">
+                {{ link.paper.title[:40] }}...
+              </a>
+              (Strength: <span class="strength-badge {{ link.evidence_strength }}">
+                {{ link.evidence_strength }}
+              </span>)
+            </div>
+            {% if link.snippet %}
+            <blockquote class="explanation-snippet">
+              "{{ link.snippet }}"
+            </blockquote>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <!-- *** END NEW v17 SECTION *** -->
+      
+    </div>
+  </div>
+  
+  <!-- Child Micro-Findings (Unchanged from v16 [cite: 343]) -->
+  <div class="finding-children">
+    {% for micro in meso.child_findings %}
+    <div class="finding-node micro-node">
+      <!-- ... (micro-finding details) ... -->
+    </div>
+    {% endfor %}
+  </div>
+</div>

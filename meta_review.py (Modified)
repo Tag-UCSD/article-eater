@@ -1,0 +1,121 @@
+The core logic of aggregate_to_meso is unchanged, but it now operates on findings instead of rules and no longer contains any logic related to mechanisms.
+
+"""
+Meta-Review Aggregation Module (v17)
+=====================================
+Aggregates micro-findings into meso-findings.
+Mechanism processing is now handled in tasks.py.
+"""
+
+from typing import List, Dict, Set, Tuple, Optional
+from models import Finding  # <-- Renamed from Rule
+from database import session_scope
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Construct Mapping (Unchanged) [cite: 249-251]
+STRESS_MEASURES = {'cortisol', 'heart_rate', 'blood_pressure', ...}
+ATTENTION_MEASURES = {'reaction_time', 'accuracy', ...}
+MOOD_MEASURES = {'panas_positive', 'panas_negative', ...}
+CONSTRUCT_MAP = {
+    'stress_reduction': STRESS_MEASURES,
+    'attention_performance': ATTENTION_MEASURES,
+    'affective_state': MOOD_MEASURES
+}
+
+def find_aggregation_opportunities() -> List[List[Finding]]:
+    """
+    Identify groups of micro-findings that should be aggregated.
+    """
+    with session_scope() as session:
+        # Query 'findings' table for 'micro' level
+        micro_findings = session.query(Finding).filter_by(finding_level='micro').all()
+        
+        # ... (Grouping logic by antecedent is identical to v16) [cite: 254]
+        
+        grouped_by_antecedent = {}
+        for finding in micro_findings:
+            key = finding.antecedents
+            if key not in grouped_by_antecedent:
+                grouped_by_antecedent[key] = []
+            grouped_by_antecedent[key].append(finding)
+        
+        opportunities = []
+        for rules in grouped_by_antecedent.values():
+            if len(rules) >= 2:
+                construct = infer_construct_from_measures(rules)
+                if construct and construct != "unknown_construct":
+                    opportunities.append(rules)
+        
+        return opportunities
+
+def aggregate_to_meso(micro_findings: List[Finding]) -> Finding:
+    """
+    Create a meso-finding by aggregating multiple micro-findings.
+    """
+    if not micro_findings:
+        raise ValueError("Cannot aggregate empty micro-finding list")
+    
+    construct = infer_construct_from_measures(micro_findings)
+    antecedents = micro_findings[0].antecedents
+    
+    # Calculate confidence (identical to v16) [cite: 257-258]
+    confidence_scores = calculate_meta_confidence(micro_findings)
+    total_confidence = sum(confidence_scores.values())
+    
+    measures_used = list(set(r.operational_measure for r in micro_findings if r.operational_measure))
+    total_n = sum(r.sample_size or 0 for r in micro_findings)
+    
+    # Create meso-finding (NO mechanism fields)
+    meso_finding = Finding(
+        consequent=construct,
+        antecedents=antecedents,
+        weight=total_confidence,
+        finding_level='meso',
+        rule_type='meta_aggregated', # Kept for compatibility
+        num_child_rules=len(micro_findings),
+        operational_measures_used=json.dumps(measures_used),
+        total_sample_size=total_n,
+        confidence_triangulation=confidence_scores['triangulation'],
+        confidence_effect_strength=confidence_scores['effect_strength'],
+        confidence_sample_size=confidence_scores['sample_size'],
+        confidence_consistency=confidence_scores['consistency']
+    )
+    
+    logger.info(f"Created meso-finding: {antecedents} -> {construct} (conf={total_confidence:.2f})")
+    
+    # Note: Linking children (setting parent_finding_id) is done
+    # by the calling function in the deployment plan's script.
+    
+    return meso_finding
+
+def infer_construct_from_measures(rules: List[Finding]) -> Optional[str]:
+    # ... (Identical to v16) [cite: 256]
+    measures = {r.operational_measure.lower() for r in rules if r.operational_measure}
+    for construct, measure_set in CONSTRUCT_MAP.items():
+        if len(measures & measure_set) >= 2:
+            return construct
+    return "unknown_construct"
+
+
+def calculate_meta_confidence(rules: List[Finding]) -> Dict[str, float]:
+    # ... (Identical to v16) [cite: 257-258]
+    unique_measures = len(set(r.operational_measure for r in rules if r.operational_measure))
+    triangulation = min(unique_measures / 4.0, 1.0) * 0.4
+    effect_sizes = [r.effect_size for r in rules if r.effect_size]
+    avg_effect = sum(effect_sizes) / len(effect_sizes) if effect_sizes else 0.5
+    effect_strength = min(avg_effect / 0.8, 1.0) * 0.3
+    total_n = sum(r.sample_size or 0 for r in rules)
+    sample_strength = min(total_n / 200.0, 1.0) * 0.2
+    directions = [r.measure_direction for r in rules if r.measure_direction]
+    direction_consistent = len(set(directions)) == 1 if directions else False
+    consistency = 0.1 if direction_consistent else 0.0
+    
+    return {
+        'triangulation': triangulation,
+        'effect_strength': effect_strength,
+        'sample_size': sample_strength,
+        'consistency': consistency
+    }

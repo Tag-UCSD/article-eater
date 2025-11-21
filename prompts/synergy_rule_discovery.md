@@ -1,0 +1,1 @@
+# Suggest synergistic/conflicting rules; include 2–5 representative DOIs.

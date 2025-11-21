@@ -1,0 +1,43 @@
+{
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/rules/{rule_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/rules"
+    },
+    {
+      "method": "GET",
+      "path": "/api/papers/{paper_id}"
+    }
+  ],
+  "cli": [
+    {
+      "command": "aectl ingest --paper <path>"
+    },
+    {
+      "command": "aectl build-ledger"
+    }
+  ],
+  "contracts": [
+    {
+      "module": "rules",
+      "version": "v1.0",
+      "file": "contracts/rules_v1.md"
+    }
+  ],
+  "db": {
+    "v17_additions": [
+      "findings (refactor)",
+      "mechanisms",
+      "finding_mechanism_links",
+      "papers"
+    ]
+  }
+}

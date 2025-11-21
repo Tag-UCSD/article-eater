@@ -1,0 +1,1 @@
+print("Use deconcat.py then verify MANIFEST.sha256")

@@ -1,0 +1,10 @@
+# Example governance config for Article Eater
+{
+  "project_name": "Article Eater",
+  "project_code": "article_eater",
+  "project_owner": "David Kirsh",
+  "primary_ai_system": "ChatGPT",
+  "primary_domain": "Cognitive and Neuroscience for Architecture (CNfA)",
+  "governance_kit_version": "3.0.0",
+  "install_date": "2025-11-11"
+}

@@ -1,0 +1,7 @@
+# Example conversation ledger for Article Eater
+{
+  "project_code": "article_eater",
+  "version": 1,
+  "governance_kit_version": "3.0.0",
+  "entries": []
+}

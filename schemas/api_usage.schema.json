@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "APIUsageEvent",
+  "type": "object",
+  "required": [
+    "event_id",
+    "user_id",
+    "provider",
+    "model",
+    "tokens_in",
+    "tokens_out",
+    "cost_usd",
+    "ts"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string"
+    },
+    "user_id": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "operation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tokens_in": {
+      "type": "integer"
+    },
+    "tokens_out": {
+      "type": "integer"
+    },
+    "cost_usd": {
+      "type": "number"
+    },
+    "ts": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Article Eater</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <div class="nav-logo">📚 Article Eater</div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="dashboard.html" class="nav-link active">
+            <span class="nav-icon">📊</span>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="search.html" class="nav-link">
+            <span class="nav-icon">🔍</span>
+            New Search
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="library.html" class="nav-link">
+            <span class="nav-icon">📚</span>
+            Library
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="rules.html" class="nav-link">
+            <span class="nav-icon">📝</span>
+            Rule Inspector
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="queue.html" class="nav-link">
+            <span class="nav-icon">⏳</span>
+            Processing Queue
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="usage.html" class="nav-link">
+            <span class="nav-icon">💰</span>
+            Usage & Costs
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html" class="nav-link">
+            <span class="nav-icon">👤</span>
+            Profile
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="text-gray-600">Welcome back, <span id="user-name">Student</span>! 👋</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" onclick="refreshDashboard()">
+            <span>🔄</span> Refresh
+          </button>
+          <a href="search.html" class="btn btn-primary">
+            <span>➕</span> New Search
+          </a>
+        </div>
+      </header>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Papers in Library</div>
+          <div class="stat-value" id="stat-papers">--</div>
+          <div class="stat-change positive">
+            <span id="stat-papers-change">--</span> this week
+          </div>
+        </div>
+
+        <div class="stat-card success">
+          <div class="stat-label">Findings Extracted</div>
+          <div class="stat-value" id="stat-findings">--</div>
+          <div class="stat-change positive">
+            <span id="stat-findings-change">--</span> this week
+          </div>
+        </div>
+
+        <div class="stat-card info">
+          <div class="stat-label">Rules Synthesized</div>
+          <div class="stat-value" id="stat-rules">--</div>
+          <div class="stat-change">
+            Average confidence: <span id="stat-avg-confidence">--</span>
+          </div>
+        </div>
+
+        <div class="stat-card warning">
+          <div class="stat-label">Cost This Month</div>
+          <div class="stat-value" id="stat-cost">--</div>
+          <div class="stat-change">
+            <span id="stat-budget-percent">--</span>% of $10 budget
+          </div>
+        </div>
+      </div>
+
+      <!-- Processing Queue Status -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Processing Queue</h2>
+          <a href="queue.html" class="btn btn-sm btn-secondary">View All</a>
+        </div>
+        <div class="card-content">
+          <div id="queue-status">
+            <div class="text-center" style="padding: 40px;">
+              <div class="spinner"></div>
+              <p class="text-gray-600 mt-md">Loading queue status...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Activity</h2>
+        </div>
+        <div class="card-content">
+          <div id="recent-activity">
+            <div class="text-center" style="padding: 40px;">
+              <div class="spinner"></div>
+              <p class="text-gray-600 mt-md">Loading recent activity...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Quick Actions</h2>
+        </div>
+        <div class="card-content">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="search.html" class="btn btn-primary btn-lg" style="text-align: center; display: block;">
+              🔍 Search Papers
+            </a>
+            <button class="btn btn-secondary btn-lg" onclick="UI.showModal('upload-modal')">
+              📄 Upload PDF
+            </button>
+            <a href="library.html" class="btn btn-secondary btn-lg" style="text-align: center; display: block;">
+              📚 Browse Library
+            </a>
+            <a href="rules.html" class="btn btn-secondary btn-lg" style="text-align: center; display: block;">
+              📝 View Rules
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Upload PDF Modal -->
+  <div id="upload-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Upload PDF</h2>
+        <button class="modal-close" onclick="UI.hideModal('upload-modal')">×</button>
+      </div>
+      <form id="upload-form" onsubmit="handleUploadPDF(event)">
+        <div class="form-group">
+          <label class="form-label">Select PDF File</label>
+          <input type="file" class="form-input" accept=".pdf" required>
+          <div class="form-hint">Maximum file size: 10 MB</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Paper Title (Optional)</label>
+          <input type="text" class="form-input" placeholder="Enter paper title if known">
+        </div>
+        <div class="form-group">
+          <label class="form-label">DOI (Optional)</label>
+          <input type="text" class="form-input" placeholder="10.1234/example">
+          <div class="form-hint">If provided, we'll fetch metadata automatically</div>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="UI.hideModal('upload-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Upload & Process</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/api.js"></script>
+  <script>
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Load stats
+        const stats = await loadStats();
+        updateStatsDisplay(stats);
+
+        // Load queue status
+        const queueJobs = await api.listJobs(null, 10);
+        updateQueueDisplay(queueJobs);
+
+        // Load recent activity
+        await loadRecentActivity();
+
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        UI.toast('Failed to load dashboard data', 'error');
+      }
+    }
+
+    // Load stats from various endpoints
+    async function loadStats() {
+      try {
+        // In real implementation, these would be separate API calls
+        // For demo, we'll simulate
+        return {
+          papers: Math.floor(Math.random() * 100) + 20,
+          papersChange: '+' + Math.floor(Math.random() * 10) + 5,
+          findings: Math.floor(Math.random() * 50) + 10,
+          findingsChange: '+' + Math.floor(Math.random() * 8) + 3,
+          rules: Math.floor(Math.random() * 20) + 5,
+          avgConfidence: '0.78',
+          cost: (Math.random() * 5 + 1).toFixed(2),
+          budgetPercent: Math.floor(Math.random() * 50) + 10
+        };
+      } catch (error) {
+        console.error('Stats load error:', error);
+        return {};
+      }
+    }
+
+    // Update stats display
+    function updateStatsDisplay(stats) {
+      document.getElementById('stat-papers').textContent = stats.papers || '--';
+      document.getElementById('stat-papers-change').textContent = stats.papersChange || '--';
+      document.getElementById('stat-findings').textContent = stats.findings || '--';
+      document.getElementById('stat-findings-change').textContent = stats.findingsChange || '--';
+      document.getElementById('stat-rules').textContent = stats.rules || '--';
+      document.getElementById('stat-avg-confidence').textContent = stats.avgConfidence || '--';
+      document.getElementById('stat-cost').textContent = '$' + (stats.cost || '0.00');
+      document.getElementById('stat-budget-percent').textContent = stats.budgetPercent || '--';
+    }
+
+    // Update queue display
+    function updateQueueDisplay(jobs) {
+      const container = document.getElementById('queue-status');
+      
+      if (!jobs || jobs.length === 0) {
+        container.innerHTML = '<p class="text-gray-600">No active jobs in queue</p>';
+        return;
+      }
+
+      // Count by status
+      const counts = jobs.reduce((acc, job) => {
+        acc[job.status] = (acc[job.status] || 0) + 1;
+        return acc;
+      }, {});
+
+      container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--warning);">
+              ${counts.pending || 0}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--gray-600);">Pending</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--info);">
+              ${counts.running || 0}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--gray-600);">Running</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--success);">
+              ${counts.complete || 0}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--gray-600);">Complete</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 2rem; font-weight: 700; color: var(--error);">
+              ${counts.failed || 0}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--gray-600);">Failed</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Load recent activity
+    async function loadRecentActivity() {
+      const container = document.getElementById('recent-activity');
+      
+      // Simulate recent activity
+      const activities = [
+        { icon: '✓', text: 'Extracted findings from "Boubekri et al. 2014"', time: '2 hours ago', type: 'success' },
+        { icon: '✓', text: 'Synthesized rule: "Natural light reduces stress by 18-31%"', time: '2 hours ago', type: 'success' },
+        { icon: '⏳', text: 'Processing: "Aries et al. 2015" (L2: Extraction)', time: '5 minutes ago', type: 'info' },
+        { icon: '🔍', text: 'Started search: "biophilic design in hospitals"', time: '3 hours ago', type: 'info' }
+      ];
+
+      container.innerHTML = activities.map(activity => `
+        <div style="display: flex; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200);">
+          <div style="font-size: 1.5rem; margin-right: 1rem;">${activity.icon}</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 500;">${activity.text}</div>
+            <div style="font-size: 0.75rem; color: var(--gray-600);">${activity.time}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Handle PDF upload
+    async function handleUploadPDF(event) {
+      event.preventDefault();
+      UI.toast('PDF upload feature coming in v18.5!', 'info');
+      UI.hideModal('upload-modal');
+    }
+
+    // Refresh dashboard
+    function refreshDashboard() {
+      UI.toast('Refreshing dashboard...', 'info');
+      loadDashboard();
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SetOfSupport",
+  "type": "object",
+  "required": [
+    "sos_id",
+    "rule_id",
+    "evidence_ids"
+  ],
+  "properties": {
+    "sos_id": {
+      "type": "string"
+    },
+    "rule_id": {
+      "type": "string"
+    },
+    "justification": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "evidence_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "strength_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "citation_weight": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "confidence_component_breakdown": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

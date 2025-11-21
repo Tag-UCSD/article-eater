@@ -1,0 +1,1 @@
+Given a rule and an article's 7‑panel, decide stance: supporting/contradicting/neutral. Provide 1–2 evidence quotes with page spans.

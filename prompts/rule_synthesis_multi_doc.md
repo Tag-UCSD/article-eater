@@ -1,0 +1,1 @@
+You are synthesizing across N papers jointly. Produce a consensus rule with citations per claim, list contradictions, and a short confidence rationale.

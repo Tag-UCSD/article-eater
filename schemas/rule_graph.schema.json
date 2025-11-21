@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RuleGraph",
+  "type": "object",
+  "required": [
+    "rule_id",
+    "status",
+    "rule_text",
+    "factors",
+    "outcomes",
+    "provenance"
+  ],
+  "properties": {
+    "rule_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "prima_facie",
+        "partial",
+        "established",
+        "explanatory"
+      ]
+    },
+    "rule_text": {
+      "type": "string"
+    },
+    "factors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "moderators": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "effect_direction": {
+      "enum": [
+        "+",
+        "-",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "effect_size": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "sos_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "provenance": {
+      "type": "object"
+    },
+    "confidence": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "contradiction_notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "triangulation_score": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cluster_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

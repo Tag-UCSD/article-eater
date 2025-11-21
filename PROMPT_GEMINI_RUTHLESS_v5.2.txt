@@ -1,0 +1,22 @@
+Use with zip or concatenated TXT:
+
+# RUTHLESS v5.2 — Article Eater GO/NO‑GO (Governance‑First, Multi‑Expert)
+
+**Panel**: Principal Engineer (enterprise stability) · Cognitive Psychology Methods Lead · UX/UI Expert.
+
+**Hard rules**: Do not delete. If a file must be replaced, move the old one under `quarantine/YYYY‑MM‑DD/<path>` and record the rationale in `release.keep.yml: notes`. Respect the kept list and PR checklist.
+
+## Checklist
+A) Governance & drift — Constitution, kept list, CI workflow, PR template, CODEOWNERS, governance scripts, ledger, `deconcat.py`, manifest script present and unchanged; no kept‑file deletions.
+B) Contracts & ledger — `public_surface_ledger.json` matches code; `contracts/*` present (especially `contracts/rules_v1.md`).
+C) Runtime & packaging — `requirements.txt` or `pyproject.toml` pins versions; optional `Dockerfile`. One‑command local run documented.
+D) DB & migrations — reversible migrations present and consistent with models; rollback path documented.
+E) Tests — unit/integration tests present and run in CI; minimum: governance sanity + meta‑review utilities.
+F) UX/UI — empty/loading and error states; tree/flat toggles; provenance counts and negative results visible; basic a11y.
+G) Methods validity — micro→meso→macro aggregation logic, effect sizes, sample sizes; negative/no‑effect handling; per‑rule provenance.
+H) Release — ZIP + concatenated TXT reconstruct via `deconcat.py`; `MANIFEST.sha256` published.
+
+## Output
+- GO/NO‑GO with one‑line rationale from each panelist.
+- Blocking / High / Medium issues with paths.
+- ≤10‑step patch plan that obeys governance.

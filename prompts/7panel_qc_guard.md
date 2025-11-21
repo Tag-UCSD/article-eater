@@ -1,0 +1,1 @@
+QC guard: Validate completeness of 7‑panel JSON; ensure quotes/pages for findings; if missing, propose minimal re-asks.

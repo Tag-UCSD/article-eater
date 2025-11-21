@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SevenPanel",
+  "type": "object",
+  "required": [
+    "article_id",
+    "panels"
+  ],
+  "properties": {
+    "article_id": {
+      "type": "string"
+    },
+    "panels": {
+      "type": "object",
+      "properties": {
+        "hypothesis": {
+          "type": "string"
+        },
+        "population_context": {
+          "type": "string"
+        },
+        "manipulations_measures": {
+          "type": "string"
+        },
+        "findings_effect": {
+          "type": "string"
+        },
+        "limitations_confounds": {
+          "type": "string"
+        },
+        "design_type": {
+          "type": "string"
+        },
+        "stats_effect_sizes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

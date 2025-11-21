@@ -1,0 +1,2 @@
+Using the Results section text, extract findings with quotes and page spans; include stats/effect sizes when reported.
+Output: fields to fill 'findings_effect' and 'stats_effect_sizes' in seven_panel schema.

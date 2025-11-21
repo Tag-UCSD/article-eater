@@ -1,0 +1,1 @@
+# Simple abstract similarity (placeholder); replace with TF‑IDF or S2 embeddings.

@@ -1,0 +1,3 @@
+# Governance Merge Notes
+Added: ['Project_Constitution.md', 'release.keep.yml', 'deprecations.yml', 'CODEOWNERS', '.github/pull_request_template.md', '.github/workflows/governance.yml', 'scripts/check_governance.py', 'scripts/orphan_sweep.py', 'scripts/public_surface_ledger.py', 'scripts/manifest_sha256.py', 'reconstructor_min.py', 'deconcat.py', 'RUTHLESS_v5.1.md', 'public_surface_ledger.json']
+Skipped (already present): []
