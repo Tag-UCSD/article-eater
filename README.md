@@ -1,4 +1,3 @@
-````markdown
 # 🧠 Article Eater v18.4.3
 
 Article Eater is an **evidence synthesis and rule-construction engine** for environmental / architectural interventions and their effects on human outcomes (stress, anxiety, mood, cognition, etc.).
