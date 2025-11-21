@@ -1,5 +1,3 @@
-Here’s a complete, rewritten `README.md` you can drop into the root of `article_eater_v18_4_3`:
-
 ````markdown
 # 🧠 Article Eater v18.4.3
 
